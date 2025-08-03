@@ -1,6 +1,6 @@
 // src/components/GadgetsPreview.jsx
 import React from 'react';
-import GadgetCard from './Gadgetcard';// Ensure GadgetCard also has dark mode styles
+import GadgetCard from './GadgetCard';// Ensure GadgetCard also has dark mode styles
 
 const GadgetsPreview = ({ onMoreAboutThis }) => (
   <div className="bg-white dark:bg-gray-700 p-6 md:p-8 rounded-xl shadow-xl mb-8">
