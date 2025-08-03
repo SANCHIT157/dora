@@ -1,6 +1,6 @@
 // src/components/FullSectionView.jsx
 import React from 'react';
-import AboutDoraemonFullContent from './Aboutdoraemonfullcontent';
+import AboutDoraemonFullContent from './AboutDoraemonFullContent';
 import EpisodesFullContent from './DiscussionFullContent';
 import CharactersFullContent from './CharactersFullContent';
 import PlacesFullContent from './PlacesFullContent';
