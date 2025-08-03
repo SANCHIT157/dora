@@ -25,7 +25,11 @@ const VideoEpisodesFullContent = () => {
   useEffect(() => {
     const seasonObj = VIDEO_SEASONS_DATA.find(s => s.season === selectedSeason);
     if (seasonObj && seasonObj.episodes.length > 0) {
-      setSelectedEpisodeId(seasonObj.episodes[0].id);
+      // Only update if selectedEpisodeId is not in the new season
+      const episodeIds = seasonObj.episodes.map(ep => ep.id);
+      if (!episodeIds.includes(selectedEpisodeId)) {
+        setSelectedEpisodeId(seasonObj.episodes[0].id);
+      }
     }
   }, [selectedSeason]);
 
@@ -40,9 +44,8 @@ const VideoEpisodesFullContent = () => {
     const allEpisodes = VIDEO_EPISODES_DATA;
     const randomIndex = Math.floor(Math.random() * allEpisodes.length);
     const randomEp = allEpisodes[randomIndex];
-    setSelectedEpisodeId(randomEp.id);
-    // Also update the season to match the random episode
     setSelectedSeason(`Season ${randomEp.season}`);
+    setSelectedEpisodeId(randomEp.id);
   };
 
   return (
