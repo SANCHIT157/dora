@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VIDEO_EPISODES_DATA } from '../data/videoEpisodesData';
 
 // Group episodes by season for UI
@@ -17,17 +17,23 @@ const getSeasons = (episodes) => {
 
 const VIDEO_SEASONS_DATA = getSeasons(VIDEO_EPISODES_DATA);
 
+function useIsMobile(breakpoint = 1024) {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < breakpoint);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [breakpoint]);
+  return isMobile;
+}
+
 const VideoEpisodesFullContent = () => {
-  // Store only the selectedEpisodeId
   const [selectedEpisodeId, setSelectedEpisodeId] = useState(VIDEO_EPISODES_DATA[0]?.id || '');
-
-  // Find the selected episode object by id
   const selectedEpisode = VIDEO_EPISODES_DATA.find(ep => ep.id === selectedEpisodeId) || null;
-
-  // Derive the current season from the selected episode
   const currentSeasonNum = selectedEpisode ? selectedEpisode.season : VIDEO_SEASONS_DATA[0].seasonNum;
   const currentSeasonLabel = `Season ${currentSeasonNum}`;
   const currentSeasonEpisodes = VIDEO_SEASONS_DATA.find(s => s.seasonNum === currentSeasonNum)?.episodes || [];
+  const isMobile = useIsMobile();
 
   const handleRandomEpisode = () => {
     const allEpisodes = VIDEO_EPISODES_DATA;
@@ -38,9 +44,8 @@ const VideoEpisodesFullContent = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
-      {/* Mobile: Player at top, then list; Desktop: list left, player right */}
-      <div className="block lg:hidden">
-        {/* Video Player and Episode Details for mobile */}
+      {/* Only render the player for the current device type */}
+      {isMobile ? (
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg flex flex-col mb-6">
           {selectedEpisode ? (
             <>
@@ -66,7 +71,7 @@ const VideoEpisodesFullContent = () => {
             <p className="text-gray-700 dark:text-gray-300 text-center py-10">Select an episode to start watching!</p>
           )}
         </div>
-      </div>
+      ) : null}
       <div className="flex flex-col lg:flex-row gap-6 w-full">
         {/* Left Column: Season and Episode List */}
         <div className="lg:w-1/4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg flex-shrink-0">
@@ -119,30 +124,32 @@ const VideoEpisodesFullContent = () => {
           </div>
         </div>
         {/* Right Column: Video Player and Episode Details for desktop only */}
-        <div className="hidden lg:flex lg:w-3/4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg flex-col">
-          {selectedEpisode ? (
-            <>
-              <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">{selectedEpisode.title}</h3>
-              <p className="text-sm text-red-600 dark:text-red-400 font-semibold mb-2">
-                Note: The video player may take some time to load the content. Please be patient.
-              </p>
-              <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden mb-4">
-                 <iframe
-                  width="100%"
-                  height="100%"
-                  src={selectedEpisode.videoUrl}
-                  title={selectedEpisode.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute top-0 left-0 w-full h-full"
-                ></iframe>
-              </div>
-            </>
-          ) : (
-            <p className="text-gray-700 dark:text-gray-300 text-center py-10">Select an episode to start watching!</p>
-          )}
-        </div>
+        {!isMobile ? (
+          <div className="hidden lg:flex lg:w-3/4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg flex-col">
+            {selectedEpisode ? (
+              <>
+                <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4">{selectedEpisode.title}</h3>
+                <p className="text-sm text-red-600 dark:text-red-400 font-semibold mb-2">
+                  Note: The video player may take some time to load the content. Please be patient.
+                </p>
+                <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden mb-4">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src={selectedEpisode.videoUrl}
+                    title={selectedEpisode.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full"
+                  ></iframe>
+                </div>
+              </>
+            ) : (
+              <p className="text-gray-700 dark:text-gray-300 text-center py-10">Select an episode to start watching!</p>
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   );
