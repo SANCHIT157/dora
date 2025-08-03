@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // Import UI Components
-import NavItem from './components/Navitem';
+import NavItem from './components/NavItem';
 import ThemeToggle from './components/ThemeToggle';
 
 // Import View Orchestration Components
