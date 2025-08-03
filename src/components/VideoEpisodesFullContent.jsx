@@ -95,8 +95,11 @@ const VideoEpisodesFullContent = () => {
               <button
                 key={s.season}
                 onClick={() => {
-                  setSelectedSeason(s.season);
-                  setSelectedEpisodeId(s.episodes[0]?.id || '');
+                  // Only update if season is different
+                  if (selectedSeason !== s.season) {
+                    setSelectedSeason(s.season);
+                    setSelectedEpisodeId(s.episodes[0]?.id || '');
+                  }
                 }}
                 className={`block w-full text-left p-2 rounded-lg mb-2 transition-colors duration-200
                   ${selectedSeason === s.season
