@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { VIDEO_EPISODES_DATA } from '../data/videoEpisodesData';
 
 // Group episodes by season for UI
@@ -10,6 +10,7 @@ const getSeasons = (episodes) => {
   });
   return Object.entries(seasons).map(([season, episodes]) => ({
     season: `Season ${season}`,
+    seasonNum: Number(season),
     episodes
   }));
 };
@@ -17,34 +18,21 @@ const getSeasons = (episodes) => {
 const VIDEO_SEASONS_DATA = getSeasons(VIDEO_EPISODES_DATA);
 
 const VideoEpisodesFullContent = () => {
-  const [selectedSeason, setSelectedSeason] = useState(VIDEO_SEASONS_DATA[0]?.season || '');
   // Store only the selectedEpisodeId
-  const [selectedEpisodeId, setSelectedEpisodeId] = useState(VIDEO_SEASONS_DATA[0]?.episodes[0]?.id || '');
-
-  // When selectedSeason changes, update selectedEpisodeId to the first episode's id of the new season
-  useEffect(() => {
-    const seasonObj = VIDEO_SEASONS_DATA.find(s => s.season === selectedSeason);
-    if (seasonObj && seasonObj.episodes.length > 0) {
-      // Only update if selectedEpisodeId is not in the new season
-      const episodeIds = seasonObj.episodes.map(ep => ep.id);
-      if (!episodeIds.includes(selectedEpisodeId)) {
-        setSelectedEpisodeId(seasonObj.episodes[0].id);
-      }
-    }
-  }, [selectedSeason]);
+  const [selectedEpisodeId, setSelectedEpisodeId] = useState(VIDEO_EPISODES_DATA[0]?.id || '');
 
   // Find the selected episode object by id
   const selectedEpisode = VIDEO_EPISODES_DATA.find(ep => ep.id === selectedEpisodeId) || null;
 
-  const currentSeasonEpisodes = VIDEO_SEASONS_DATA.find(
-    (s) => s.season === selectedSeason
-  )?.episodes || [];
+  // Derive the current season from the selected episode
+  const currentSeasonNum = selectedEpisode ? selectedEpisode.season : VIDEO_SEASONS_DATA[0].seasonNum;
+  const currentSeasonLabel = `Season ${currentSeasonNum}`;
+  const currentSeasonEpisodes = VIDEO_SEASONS_DATA.find(s => s.seasonNum === currentSeasonNum)?.episodes || [];
 
   const handleRandomEpisode = () => {
     const allEpisodes = VIDEO_EPISODES_DATA;
     const randomIndex = Math.floor(Math.random() * allEpisodes.length);
     const randomEp = allEpisodes[randomIndex];
-    setSelectedSeason(`Season ${randomEp.season}`);
     setSelectedEpisodeId(randomEp.id);
   };
 
@@ -99,13 +87,12 @@ const VideoEpisodesFullContent = () => {
                 key={s.season}
                 onClick={() => {
                   // Only update if season is different
-                  if (selectedSeason !== s.season) {
-                    setSelectedSeason(s.season);
+                  if (currentSeasonNum !== s.seasonNum) {
                     setSelectedEpisodeId(s.episodes[0]?.id || '');
                   }
                 }}
                 className={`block w-full text-left p-2 rounded-lg mb-2 transition-colors duration-200
-                  ${selectedSeason === s.season
+                  ${currentSeasonNum === s.seasonNum
                     ? 'bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-white font-semibold'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-gray-600'
                   }`}
@@ -114,9 +101,9 @@ const VideoEpisodesFullContent = () => {
               </button>
             ))}
           </div>
-          <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-4 border-b pb-2">Episodes ({selectedSeason})</h3>
+          <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-4 border-b pb-2">Episodes ({currentSeasonLabel})</h3>
           <div className="max-h-96 overflow-y-auto custom-scrollbar">
-            {currentSeasonEpisodes.map((episode, idx) => (
+            {currentSeasonEpisodes.map((episode) => (
               <button
                 key={episode.id}
                 onClick={() => setSelectedEpisodeId(episode.id)}
