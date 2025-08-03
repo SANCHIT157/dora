@@ -1,5 +1,5 @@
 import React from 'react';
-import CharacterCard from './Charactercard'; // Ensure CharacterCard has dark mode styles
+import CharacterCard from './CharacterCard'; // Ensure CharacterCard has dark mode styles
 
 const CharactersFullContent = () => (
   <div className="grid grid-cols-1 gap-6"> {/* Changed to single column grid for main container to allow section titles to span full width */}
