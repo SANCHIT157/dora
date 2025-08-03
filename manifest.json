@@ -1,0 +1,19 @@
+{
+    "short_name": "Doraemon App",
+    "name": "Doraemon Universe Fan App",
+    "icons": [{
+            "src": "/Doraemon-in-Red-Frame.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/Doraemon-in-Red-Frame.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#2196F3",
+    "background_color": "#F0F4F8"
+}
