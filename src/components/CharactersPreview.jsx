@@ -1,6 +1,6 @@
 // src/components/CharactersPreview.jsx
 import React from 'react';
-import CharacterCard from './Charactercard'; // Ensure CharacterCard also has dark mode styles
+import CharacterCard from './CharacterCard'; // Ensure CharacterCard also has dark mode styles
 
 const CharactersPreview = ({ onMoreAboutThis }) => (
   <div className="bg-white dark:bg-gray-700 p-6 md:p-8 rounded-xl shadow-xl mb-8">
